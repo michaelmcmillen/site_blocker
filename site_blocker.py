@@ -5,14 +5,18 @@ import smtplib
 from email.mime.text import MIMEText
 
 # Hostfile location
-hostfile_location = ""
+hostfile_location = "C:\Windows\System32\drivers\etc" # Generic  Windows host file location
 hostfile_name = "hosts"
 
 # Email setup for unique passcode
+# GMail account for unblocking code to be sent too. Replace email with your email and password with your password
+# In order to work, the account must allow 'less secure apps' to access it. This setting can be turned on in account settings
+email = 'websiteblockerext@gmail.com'
+password = 'websiteblockerext'
 s = smtplib.SMTP_SSL('smtp.gmail.com')
 s.connect('smtp.gmail.com', 465)
 s.starttls
-s.login('websiteblockerext@gmail.com', 'websiteblockerext')
+s.login(email, password)
 
 
 # Start Website Blocker process
@@ -21,7 +25,7 @@ def website_blocker():
     print("\nWelcome to your website blocker utility!\n")
     downtime_length = downtime()
     print(f"\nYour unique unlock code will be emailed to "
-          f"\"websiteblockerext@gmail.com\" in {downtime_length} hours.")
+          f"{email} in {downtime_length} hours.")
     append_hostfile()
     start_timer(downtime_length)
 
@@ -47,8 +51,10 @@ def validateDowntimeHours(hours):
 
 
 # Add websites to be blocked to hostfile and specify unreachable IP
+# Currently only adds Facebook with an IP of 127.0.0.1 so it cannot be reached.
+# Other websites can be added by replacing/adding to below code
 def append_hostfile():
-    update_hostfile = open(f"{hostfile_location}test_hostfile.txt", 'a')
+    update_hostfile = open(f"{hostfile_location}/hosts", 'a')
     update_hostfile.write("\n \t127.0.0.1\t\twww.facebook.com")
 
 
@@ -80,9 +86,9 @@ def generate_random_id():
 def generateEmail(randomID):
     msg = MIMEText(randomID)
     msg['Subject'] = "Unique Unblocking Code"
-    msg['From'] = "websiteblockerext@gmail.com"
-    msg['To'] = "websiteblockerext@gmail.com"
-    s.sendmail('websiteblockerext@gmail.com', 'websiteblockerext@gmail.com',
+    msg['From'] = email
+    msg['To'] = email
+    s.sendmail(email, email,
                msg.as_string())
 
 
@@ -109,13 +115,13 @@ def validateRandomID(randID, rID):
 
 # Revert hostfile to original
 def revert_hostfile():
-    with open(f"{hostfile_location}test_hostfile.txt", 'r') as hostfile:
+    with open(f"{hostfile_location}/hosts", 'r') as hostfile:
         revert_hostfile = hostfile.readlines()
-    with open(f"{hostfile_location}test_hostfile.txt", 'w') as hostfile:
+    with open(f"{hostfile_location}/hosts", 'w') as hostfile:
         for n in revert_hostfile:
             if "www.facebook.com" not in n:
                 hostfile.write(n)
-    with open(f"{hostfile_location}test_hostfile.txt", 'r+') as f:
+    with open(f"{hostfile_location}/hosts", 'r+') as f:
         lines = f.readlines()
         lines[-1] = lines[-1].strip()
         f.seek(0)
@@ -125,9 +131,3 @@ def revert_hostfile():
 
 if __name__ == '__main__':
     website_blocker()
-    # generate_random_id()
-    # revert_hostfile()
-    # generateEmail('1111')
-    # generateEmail(generate_random_id())
-    # validateRandomID("0")
-    # downtime()
