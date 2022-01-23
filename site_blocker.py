@@ -9,7 +9,7 @@ hostfile_location = "C:\Windows\System32\drivers\etc" # Generic  Windows host fi
 hostfile_name = "hosts"
 
 # Email setup for unique passcode
-# GMail account for unblocking code to be sent too. Replace email with your email and password with your password
+# GMail account for unblocking code to send and be sent too. Replace email with your email and password with your password
 # In order to work, the account must allow 'less secure apps' to access it. This setting can be turned on in account settings
 email = 'websiteblockerext@gmail.com'
 password = 'websiteblockerext'
